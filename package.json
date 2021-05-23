@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build": "pkg . --targets latest-win-x64 --out-dir build"
+    "build": "pkg . --targets latest-win-x64 --out-dir build --compress GZip"
   },
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
