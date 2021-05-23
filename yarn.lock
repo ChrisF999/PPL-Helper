@@ -1250,13 +1250,6 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
-upx@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/upx/-/upx-1.0.6.tgz#274a7991e242d0e08d31fab8eb2294aa1d8b8c68"
-  integrity sha512-LRlldlzT/RNXQl442PyQ0imozDTkhjsKnJc6ugchhy+RP+QXICWk5kXyfnhSIVtfz41fZOSNyL2BLup2VSriqA==
-  dependencies:
-    debug "^4.1.1"
-
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
