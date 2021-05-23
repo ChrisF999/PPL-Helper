@@ -163,7 +163,7 @@ async function runPPL(pathPulsarLostColony) {
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
 
             await onExit(childProcess).then(() => {
-                //deletePPLGraceful();
+                deletePPLGraceful();
             });
         } else {
             console.log(chalk.red('Assembly-CSharp.dll not detected please verify your game files.'));
@@ -185,5 +185,5 @@ function deletePPL() {
 }
 
 process.on('exit', () => {
-    //deletePPL();
+    deletePPL();
 });
