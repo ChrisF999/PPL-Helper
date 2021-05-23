@@ -29,7 +29,7 @@ function directoryExists(dir) {
 function readRegistry() {
     // We can't find Steam. Let's try with the registry
     let i;
-    let prefix = '\\Software';
+    let prefix = '\\Software\\WOW6432Node';
 
     let regKey = new registry({
         hive: registry.HKLM,
@@ -68,7 +68,7 @@ async function findPulsarLostColony() {
         let steamlibrary = Object.keys(steamlibaries.LibraryFolders);
         steamlibrary.splice(-2);
         let pulsarcheck = [];
-        pulsarcheck.push(path.resolve('C:\\Program Files (x86)\\Steam'));
+        pulsarcheck.push(path.resolve(await findSteamWin32()));
         let pulsarfound = false;
         steamlibrary.forEach((value) => {
             pulsarcheck.push(path.resolve(steamlibaries.LibraryFolders[value]));
