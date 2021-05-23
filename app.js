@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {spawn} = require('child_process');
+const {onExit} = require('@rauschma/stringio');
 const chalk = require('chalk');
 const registry = require('winreg');
 const VDF = require('simple-vdf2');
@@ -53,13 +54,14 @@ function readRegistry() {
 async function findPulsarLostColony() {
 
     //todo add steam install location check
-    let steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps\\libraryfolders.vdf`)
+    let steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps`)
+    
     let pathPulsarLostColony
     console.log(chalk.blue('Checking for Steam Libraries\n'));
 
     if (fs.existsSync(steampath)) {
         console.log(chalk.green(`Steam Library Detected at ${steampath}`));
-
+        steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps\\libraryfolders.vdf`)
         let steamlibaries = new VDF.parse(fs.readFileSync(steampath, { encoding: 'utf8', flag: 'r' }));
 
         let steamlibrary = Object.keys(steamlibaries.LibraryFolders);
@@ -126,7 +128,7 @@ function downloadPPL() {
         });
 }
 function deletePPL() {
-    fs.rmdirSync("./temp", { recursive: true }, (err) => {
+    fs.rmSync("./temp", { recursive: true }, (err) => {
         if (err) {
             console.error(err)
             process.exit(0)
@@ -134,8 +136,12 @@ function deletePPL() {
     })
 
     console.log(chalk.green('PPL Helper has cleaned up'))
-
-
+    console.log(chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend,'\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`))
+    const pressAnyKey = require('press-any-key');
+    pressAnyKey()
+    .then(() => {
+      process.exit(0)
+    })
 }
 downloadPPL()
 //deletePPL()
@@ -143,20 +149,15 @@ downloadPPL()
 
 async function runPPL(pathPulsarLostColony) {
     const Assembly = path.join(pathPulsarLostColony,'\\PULSAR_LostColony_Data\\Managed\\Assembly-CSharp.dll')
-    //const Assembly = path.resolve(pathPulsarLostColony.concat('\\PULSAR_LostColony_Data\\Managed\\Assembly-CSharp.dll'))
     const bootstaper = (path.resolve('./temp/PulsarPluginBootstrapper.exe'))
-    console.log(Assembly)
     if (fs.existsSync(Assembly) && fs.existsSync(bootstaper)) {
         console.log(chalk.green('\nPPL is running'))
 
         const childProcess = spawn(bootstaper, [Assembly],
         {stdio: [process.stdin, process.stdout]});
+
+        await onExit(childProcess).then(() =>{
+            deletePPL()
+        })
     }
 }
-//runPPL(findPulsarLostColony())
-process.on('exit', (code) => {
-    deletePPL()
-    console.log(chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend,'\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`))
-  });
-
-  //downloadPPL()

@@ -1,17 +1,23 @@
 {
-  "name": "ppl_helper",
-  "version": "pre-release",
+  "name": "PPL_Helper",
+  "version": "release",
   "main": "app.js",
+  "bin": "app.js",
   "license": "MIT",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "build": "pkg . --targets latest-win-x64 --out-dir build"
   },
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
     "@terascope/fetch-github-release": "^0.7.7",
     "chalk": "^4.1.1",
+    "press-any-key": "^0.1.1",
     "simple-vdf2": "^1.2.1",
     "winreg": "^1.2.4"
+  },
+  "devDependencies": {
+    "pkg": "^5.2.0"
   }
 }
