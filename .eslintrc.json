@@ -19,6 +19,8 @@
         "quotes": [
             "error",
             "double"
-        ]
+        ],
+        "no-extra-parens": "all",
+        "camelcase": 2
     }
 }
