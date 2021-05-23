@@ -145,7 +145,7 @@ function deletePPLGraceful() {
     console.log(
         chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend, '\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`)
     );
-    console.log(chalk.blue("PPL Helper was made by ChrisF999 thanks for using it"))
+    console.log(chalk.blue("PPL Helper was made by ChrisF999 thanks for using it"));
 
     waitforkey();
     return;
