@@ -1,0 +1,16 @@
+{
+  "name": "ppl_helper",
+  "version": "pre-release",
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "@rauschma/stringio": "^1.4.0",
+    "@terascope/fetch-github-release": "^0.7.7",
+    "simple-vdf2": "^1.2.1",
+    "subprocess": "^0.3.0"
+  }
+}
