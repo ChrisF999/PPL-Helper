@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build": "pkg . --targets latest-win-x64 --out-dir build --compress GZip"
+    "build": "pkg . --targets latest-win-x64 --out-dir build --compress GZip",
+    "lint": "eslint"
   },
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
@@ -18,6 +19,7 @@
     "winreg": "^1.2.4"
   },
   "devDependencies": {
+    "eslint": "^7.27.0",
     "pkg": "^5.2.0"
   }
 }

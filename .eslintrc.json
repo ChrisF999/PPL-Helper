@@ -1,9 +1,22 @@
 {
     "parserOptions": {
-      "ecmaVersion": 2020
+        "ecmaVersion": 2020
     },
+    "globals": {
+        "$": true,
+        "require": true,
+        "process": true
+      },
     "extends": "eslint:recommended",
     "rules": {
-      "no-unused-vars": "error"
+        "no-unused-vars": "error",
+        "semi": [
+            "error",
+            "always"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ]
     }
-  }
+}
