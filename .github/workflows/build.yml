@@ -15,7 +15,7 @@ on:
 
 jobs:
   lint-and-test:
-    name: Test
+    name: Build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -26,4 +26,4 @@ jobs:
     - name: Build
       uses: CultureHQ/actions-yarn@master
       with:
-        args: Build
+        args: build
