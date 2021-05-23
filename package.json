@@ -10,7 +10,6 @@
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
     "@terascope/fetch-github-release": "^0.7.7",
-    "simple-vdf2": "^1.2.1",
-    "subprocess": "^0.3.0"
+    "simple-vdf2": "^1.2.1"
   }
 }
