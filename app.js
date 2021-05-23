@@ -1,67 +1,66 @@
 const fs = require('fs');
 const path = require('path');
-const {spawn} = require('child_process');
-const {onExit} = require('@rauschma/stringio');
+const { spawn } = require('child_process');
+const { onExit } = require('@rauschma/stringio');
 const chalk = require('chalk');
 const registry = require('winreg');
+const pressAnyKey = require('press-any-key');
 const VDF = require('simple-vdf2');
 const downloadRelease = require('@terascope/fetch-github-release');
 let pathfortheend = undefined;
 
 function findSteamWin32() {
     let base = process.env['ProgramFiles(x86)'] || process.env.ProgramFiles;
-  
+
     return directoryExists(base + '\\Steam').catch(() => {
-      return readRegistry();
+        return readRegistry();
     });
-  }
+}
 
 function directoryExists(dir) {
     return new Promise((resolve, reject) => {
-      fs.access(dir, fs.constants.R_OK, (err) => {
-        err ? reject(err) : resolve(dir);
-      });
+        fs.access(dir, fs.constants.R_OK, (err) => {
+            err ? reject(err) : resolve(dir);
+        });
     });
-  }
+}
 function readRegistry() {
     // We can't find Steam. Let's try with the registry
     let i;
     let prefix = '\\Software';
-  
-    let regKey = new registry({
-      hive: registry.HKLM,
-      key: prefix + '\\Valve\\Steam\\'
-    });
-  
-    return new Promise((resolve, reject) => {
-      regKey.values(function(err, items) {
-        if(err) {
-          reject(err);
-        } else {
-          for(i = 0; i < items.length; ++i) {
-            if(items[i].name === 'InstallPath') {
-              resolve(directoryExists(items[i].value));
-            }
-          }
-  
-          reject();
-        }
-      });
-    });
-  }
 
+    let regKey = new registry({
+        hive: registry.HKLM,
+        key: prefix + '\\Valve\\Steam\\',
+    });
+
+    return new Promise((resolve, reject) => {
+        regKey.values(function (err, items) {
+            if (err) {
+                reject(err);
+            } else {
+                for (i = 0; i < items.length; ++i) {
+                    if (items[i].name === 'InstallPath') {
+                        resolve(directoryExists(items[i].value));
+                    }
+                }
+
+                reject();
+            }
+        });
+    });
+}
 
 async function findPulsarLostColony() {
-
     //todo add steam install location check
-    let steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps`)
-    
-    let pathPulsarLostColony
+    let steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps`);
+
+    let pathPulsarLostColony;
     console.log(chalk.blue('Checking for Steam Libraries\n'));
 
     if (fs.existsSync(steampath)) {
         console.log(chalk.green(`Steam Library Detected at ${steampath}`));
-        steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps\\libraryfolders.vdf`)
+        steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps\\libraryfolders.vdf`);
         let steamlibaries = new VDF.parse(fs.readFileSync(steampath, { encoding: 'utf8', flag: 'r' }));
 
         let steamlibrary = Object.keys(steamlibaries.LibraryFolders);
@@ -71,7 +70,7 @@ async function findPulsarLostColony() {
         let pulsarfound = false;
         steamlibrary.forEach((value) => {
             pulsarcheck.push(path.resolve(steamlibaries.LibraryFolders[value]));
-            console.log(chalk.green(`Steam Librie Detected at ${path.resolve(steamlibaries.LibraryFolders[value])}`));
+            console.log(chalk.green(`Steam Library Detected at ${path.resolve(steamlibaries.LibraryFolders[value])}`));
         });
         pulsarcheck.forEach((steampath) => {
             let temp = fs.readdirSync(steampath.concat('\\steamapps'));
@@ -80,25 +79,30 @@ async function findPulsarLostColony() {
                 if (file.includes('appmanifest_252870.acf') && fs.existsSync(steampath.concat('\\steamapps\\common\\PULSARLostColony'))) {
                     pulsarfound = true;
                     console.log(chalk.blue(`\nPULSAR: Lost Colony detected at ${path.resolve(steampath.concat('\\steamapps\\common\\PULSARLostColony'))}`));
-                    pathPulsarLostColony = steampath.concat('\\steamapps\\common\\PULSARLostColony')
+                    pathPulsarLostColony = steampath.concat('\\steamapps\\common\\PULSARLostColony');
                 }
             });
-
         });
 
         if (!pulsarfound) {
-            console.log(chalk.red('\nPULSAR: Lost Colony was not detected as installed'))
-            process.exit(0)
+            console.log(chalk.red('\nPULSAR: Lost Colony was not detected as installed'));
+            waitforkey();
+            return;
         }
-
     } else {
         console.log(chalk.red('Steam cannot be found.'));
-        process.exit(0);
+        waitforkey();
+        return;
     }
-    pathfortheend = pathPulsarLostColony
-    return pathPulsarLostColony
+    pathfortheend = pathPulsarLostColony;
+    return pathPulsarLostColony;
 }
 
+function waitforkey() {
+    pressAnyKey().then(() => {
+        process.exit(0);
+    });
+}
 
 function downloadPPL() {
     const user = 'PULSAR-Modders';
@@ -118,46 +122,65 @@ function downloadPPL() {
         return asset.name.includes('PulsarPluginBootstrapper');
     }
     downloadRelease(user, repo, outputdir, filterRelease, filterAsset, leaveZipped, disableLogging)
-        .then( async function () {
+        .then(async function () {
             console.log(chalk.green('Downloaded PPL'));
-            runPPL(await findPulsarLostColony())
+            runPPL(await findPulsarLostColony());
         })
         .catch(function (err) {
             console.error(err.message);
-            process.exit(1)
+            process.exit(1);
         });
 }
-function deletePPL() {
-    fs.rmSync("./temp", { recursive: true }, (err) => {
+function deletePPLGraceful() {
+    fs.rmSync('./temp', { recursive: true }, (err) => {
         if (err) {
-            console.error(err)
-            process.exit(0)
+            console.error(err);
+            process.exit(0);
         }
-    })
+    });
 
-    console.log(chalk.green('PPL Helper has cleaned up'))
-    console.log(chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend,'\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`))
-    const pressAnyKey = require('press-any-key');
-    pressAnyKey()
-    .then(() => {
-      process.exit(0)
-    })
+    console.log(chalk.green('\nPPL Helper has cleaned up'));
+    console.log(
+        chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend, '\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`)
+    );
+
+    waitforkey();
+    return;
 }
-downloadPPL()
+downloadPPL();
 //deletePPL()
 
-
 async function runPPL(pathPulsarLostColony) {
-    const Assembly = path.join(pathPulsarLostColony,'\\PULSAR_LostColony_Data\\Managed\\Assembly-CSharp.dll')
-    const bootstaper = (path.resolve('./temp/PulsarPluginBootstrapper.exe'))
-    if (fs.existsSync(Assembly) && fs.existsSync(bootstaper)) {
-        console.log(chalk.green('\nPPL is running'))
+    if (pathPulsarLostColony) {
+        const Assembly = path.join(pathPulsarLostColony, '\\PULSAR_LostColony_Data\\Managed\\Assembly-CSharp.dll');
+        const bootstaper = path.resolve('./temp/PulsarPluginBootstrapper.exe');
+        if (fs.existsSync(Assembly) && fs.existsSync(bootstaper)) {
+            console.log(chalk.green('\nPPL is running'));
 
-        const childProcess = spawn(bootstaper, [Assembly],
-        {stdio: [process.stdin, process.stdout]});
+            const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
 
-        await onExit(childProcess).then(() =>{
-            deletePPL()
-        })
+            await onExit(childProcess).then(() => {
+                deletePPLGraceful();
+            });
+        } else {
+            console.log(chalk.red('Assembly-CSharp.dll not detected please verify your game files.'));
+            waitforkey();
+            return;
+        }
     }
 }
+function deletePPL() {
+    if (fs.existsSync('./temp')) {
+        fs.rmSync('./temp', { recursive: true }, (err) => {
+            if (err) {
+                console.error(err);
+                process.exit(0);
+            }
+            console.log(chalk.green('\nPPL Helper has cleaned up'));
+        });
+    }
+}
+
+process.on('exit', () => {
+    deletePPL();
+});
