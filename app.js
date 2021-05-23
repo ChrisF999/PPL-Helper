@@ -60,10 +60,10 @@ async function findPulsarLostColony() {
     let pathPulsarLostColony;
     console.log(chalk.blue('Checking for Steam Libraries\n'));
 
-    if (fs.existsSync(steampath)) {
+    if (fs.existsSync(path.resolve(steampath))) {
         console.log(chalk.green(`Steam Library Detected at ${steampath}`));
         steampath = path.resolve(`${path.resolve(await findSteamWin32())}\\steamapps\\libraryfolders.vdf`);
-        let steamlibaries = new VDF.parse(fs.readFileSync(steampath, { encoding: 'utf8', flag: 'r' }));
+        let steamlibaries = new VDF.parse(fs.readFileSync(path.resolve(steampath), { encoding: 'utf8', flag: 'r' }));
 
         let steamlibrary = Object.keys(steamlibaries.LibraryFolders);
         steamlibrary.splice(-2);
@@ -75,10 +75,10 @@ async function findPulsarLostColony() {
             console.log(chalk.green(`Steam Library Detected at ${path.resolve(steamlibaries.LibraryFolders[value])}`));
         });
         pulsarcheck.forEach((steampath) => {
-            let temp = fs.readdirSync(steampath.concat('\\steamapps'));
+            let temp = fs.readdirSync(path.resolve(steampath.concat('\\steamapps')));
 
             temp.forEach((file) => {
-                if (file.includes('appmanifest_252870.acf') && fs.existsSync(steampath.concat('\\steamapps\\common\\PULSARLostColony'))) {
+                if (file.includes('appmanifest_252870.acf') && fs.existsSync(path.resolve(steampath.concat('\\steamapps\\common\\PULSARLostColony')))) {
                     pulsarfound = true;
                     console.log(chalk.blue(`\nPULSAR: Lost Colony detected at ${path.resolve(steampath.concat('\\steamapps\\common\\PULSARLostColony'))}`));
                     pathPulsarLostColony = steampath.concat('\\steamapps\\common\\PULSARLostColony');
@@ -157,7 +157,7 @@ async function runPPL(pathPulsarLostColony) {
     if (pathPulsarLostColony) {
         const Assembly = path.join(pathPulsarLostColony, '\\PULSAR_LostColony_Data\\Managed\\Assembly-CSharp.dll');
         const bootstaper = path.resolve('./temp/PulsarPluginBootstrapper.exe');
-        if (fs.existsSync(Assembly) && fs.existsSync(bootstaper)) {
+        if (fs.existsSync(path.resolve(Assembly)) && fs.existsSync(path.resolve(bootstaper))) {
             console.log(chalk.green('\nPPL is running'));
 
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
