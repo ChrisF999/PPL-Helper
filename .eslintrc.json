@@ -20,7 +20,7 @@
             "error",
             "double"
         ],
-        "no-extra-parens": "all",
+        "no-extra-parens": 2,
         "camelcase": 2
     }
 }
