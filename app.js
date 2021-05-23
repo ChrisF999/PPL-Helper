@@ -1,3 +1,5 @@
+"use strict";
+
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -143,6 +145,7 @@ function deletePPLGraceful() {
     console.log(
         chalk.blue(`PPL Helper has installed PPL for you. You can now install mods in ${chalk.yellow(path.join(pathfortheend, '\\PULSAR_LostColony_Data\\Managed\\Plugins'))}`)
     );
+    console.log(chalk.blue("PPL Helper was made by ChrisF999 thanks for using it"))
 
     waitforkey();
     return;
@@ -160,7 +163,7 @@ async function runPPL(pathPulsarLostColony) {
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
 
             await onExit(childProcess).then(() => {
-                deletePPLGraceful();
+                //deletePPLGraceful();
             });
         } else {
             console.log(chalk.red('Assembly-CSharp.dll not detected please verify your game files.'));
@@ -182,5 +185,5 @@ function deletePPL() {
 }
 
 process.on('exit', () => {
-    deletePPL();
+    //deletePPL();
 });
