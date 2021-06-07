@@ -11,13 +11,13 @@ const VDF = require('simple-vdf2');
 const downloadRelease = require('@terascope/fetch-github-release');
 let pathfortheend = undefined;
 
-var util = require('util');
-var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
-var log_stdout = process.stdout;
+const util = require('util');
+const logFile = fs.createWriteStream('./pplHelper.log', {flags : 'w'});
+const logStdout = process.stdout;
 
 console.log = function(d) { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
+  logFile.write(util.format(d) + '\n');
+  logStdout.write(util.format(d) + '\n');
 };
 
 function findSteamWin32() {
@@ -171,7 +171,7 @@ async function runPPL(pathPulsarLostColony) {
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
           
             await onExit(childProcess).then(() => {
-              log_file.write(util.format((fs.readFileSync('./temp/Log.txt', {encoding:'utf8', flag:'r'})))); 
+              logFile.write(util.format(fs.readFileSync('./temp/Log.txt', {encoding:'utf8', flag:'r'}))); 
                 deletePPLGraceful();
             });
         } else {
