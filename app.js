@@ -171,7 +171,7 @@ async function runPPL(pathPulsarLostColony) {
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
           
             await onExit(childProcess).then(() => {
-              log_file.write(util.format((fs.readFileSync('./temp/Log.txt', {encoding:'utf8', flag:'r'})))); 
+              log_file.write(util.format(fs.readFileSync('./temp/Log.txt', {encoding:'utf8', flag:'r'}))); 
                 deletePPLGraceful();
             });
         } else {
