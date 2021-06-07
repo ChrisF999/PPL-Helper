@@ -11,6 +11,15 @@ const VDF = require('simple-vdf2');
 const downloadRelease = require('@terascope/fetch-github-release');
 let pathfortheend = undefined;
 
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
 function findSteamWin32() {
     let base = process.env['ProgramFiles(x86)'] || process.env.ProgramFiles;
 
@@ -151,7 +160,6 @@ function deletePPLGraceful() {
     return;
 }
 downloadPPL();
-//deletePPL()
 
 async function runPPL(pathPulsarLostColony) {
     if (pathPulsarLostColony) {
@@ -161,8 +169,9 @@ async function runPPL(pathPulsarLostColony) {
             console.log(chalk.green('\nPPL is running'));
 
             const childProcess = spawn(bootstaper, [Assembly], { stdio: [process.stdin, process.stdout] });
-
+          
             await onExit(childProcess).then(() => {
+              log_file.write(util.format((fs.readFileSync('./temp/Log.txt', {encoding:'utf8', flag:'r'})))); 
                 deletePPLGraceful();
             });
         } else {
@@ -184,6 +193,17 @@ function deletePPL() {
     }
 }
 
-process.on('exit', () => {
+process
+  .on("unhandledRejection", (reason, p) => {
+    console.log(chalk.red.bold("You should never see this please report it"));
+    console.error(reason, "Unhandled Rejection at Promise", p);
+    waitforkey();
+  })
+  .on("uncaughtException", (err) => {
+    console.log(chalk.red.bold("You should never see this please report it"));
+    console.error(err, "Uncaught Exception thrown");
+    waitforkey();
+  })
+  .on("exit", () => {
     deletePPL();
-});
+  });
