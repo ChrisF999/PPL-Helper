@@ -5,6 +5,6 @@ PPL-Helper
 
 
 ## License
-All rights reserved. See [LICENSE](LICENSE).
+Released into the public domain under [The Unlicense](LICENSE).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FChrisF999%2FPPL-Helper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FChrisF999%2FPPL-Helper?ref=badge_large)
